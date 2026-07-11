@@ -1,0 +1,38 @@
+name: GitBan Project - PR Merged
+
+on:
+  pull_request_target:
+    types: [closed]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  merge-log:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.pull_request.merged == true }}
+    steps:
+      - name: Check out automation scripts
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Move linked issues to done and log merged PR
+        uses: actions/github-script@v9
+        env:
+          GITBAN_PROJECT_NUMBER: ${{ vars.GITBAN_PROJECT_NUMBER }}
+          GITBAN_PROJECT_OWNER: ${{ vars.GITBAN_PROJECT_OWNER }}
+          GITBAN_PROJECT_OWNER_TYPE: ${{ vars.GITBAN_PROJECT_OWNER_TYPE }}
+          GITBAN_STATUS_FIELD: ${{ vars.GITBAN_STATUS_FIELD }}
+          GITBAN_DONE_STATUS: ${{ vars.GITBAN_DONE_STATUS }}
+          GITBAN_MERGE_LOG_STATUS: ${{ vars.GITBAN_MERGE_LOG_STATUS }}
+          GITBAN_END_DATE_FIELD: ${{ vars.GITBAN_END_DATE_FIELD }}
+          GITBAN_TARGET_DATE_FIELD: ${{ vars.GITBAN_TARGET_DATE_FIELD }}
+        with:
+          github-token: ${{ secrets.GITBAN_PROJECT_TOKEN || secrets.GITBAN_PAT || secrets.BRANCHFLOW_PAT || github.token }}
+          script: |
+            const automation = require("./.github/scripts/project-automation.js")({ github, context, core });
+            await automation.moveLinkedIssuesToDone();
+            await automation.addPullRequestToMergeLog();

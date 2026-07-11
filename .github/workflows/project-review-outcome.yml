@@ -1,0 +1,47 @@
+name: GitBan Project - Review Outcome
+
+on:
+  pull_request_review:
+    types: [submitted]
+
+permissions:
+  contents: read
+  pull-requests: read
+  issues: read
+
+jobs:
+  move-linked-issues:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out automation scripts
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.repository.default_branch }}
+
+      - name: Move linked issues from review state
+        uses: actions/github-script@v9
+        env:
+          GITBAN_PROJECT_NUMBER: ${{ vars.GITBAN_PROJECT_NUMBER }}
+          GITBAN_PROJECT_OWNER: ${{ vars.GITBAN_PROJECT_OWNER }}
+          GITBAN_PROJECT_OWNER_TYPE: ${{ vars.GITBAN_PROJECT_OWNER_TYPE }}
+          GITBAN_STATUS_FIELD: ${{ vars.GITBAN_STATUS_FIELD }}
+          GITBAN_IN_PROGRESS_STATUS: ${{ vars.GITBAN_IN_PROGRESS_STATUS }}
+          GITBAN_IN_REVIEW_STATUS: ${{ vars.GITBAN_IN_REVIEW_STATUS }}
+          GITBAN_START_DATE_FIELD: ${{ vars.GITBAN_START_DATE_FIELD }}
+        with:
+          github-token: ${{ secrets.GITBAN_PROJECT_TOKEN || secrets.GITBAN_PAT || secrets.BRANCHFLOW_PAT || github.token }}
+          script: |
+            const reviewState = (context.payload.review.state || "").toLowerCase();
+            const automation = require("./.github/scripts/project-automation.js")({ github, context, core });
+
+            if (reviewState === "changes_requested") {
+              await automation.moveLinkedIssuesToInProgress();
+              return;
+            }
+
+            if (reviewState === "approved") {
+              await automation.moveLinkedIssuesToReview();
+              return;
+            }
+
+            core.info(`No project move configured for review state: ${reviewState}`);

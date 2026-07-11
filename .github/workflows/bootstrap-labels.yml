@@ -1,0 +1,54 @@
+name: GitBan Bootstrap Labels
+
+on:
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create or update standard labels
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const labels = [
+              { name: "type: feature", color: "1f883d", description: "New product or technical capability" },
+              { name: "type: bug", color: "d1242f", description: "Defect or regression" },
+              { name: "type: chore", color: "6e7781", description: "Maintenance, dependency, or cleanup work" },
+              { name: "type: hotfix", color: "bc4c00", description: "Urgent production fix" },
+              { name: "type: spike", color: "8250df", description: "Research or discovery work" },
+              { name: "type: task", color: "0969da", description: "Implementation task" },
+              { name: "priority: critical", color: "cf222e", description: "Must be handled immediately" },
+              { name: "priority: high", color: "fb8500", description: "Important and time-sensitive" },
+              { name: "priority: normal", color: "0969da", description: "Standard priority" },
+              { name: "priority: low", color: "57606a", description: "Useful but not urgent" },
+              { name: "status: blocked", color: "6f42c1", description: "Cannot proceed without external input" },
+              { name: "test: required", color: "f9d649", description: "Further testing necessary" },
+              { name: "test: automated", color: "f6c344", description: "Automated tests required or updated" },
+              { name: "test: manual", color: "fce8a4", description: "Manual testing required" },
+              { name: "test: not needed", color: "ead7a5", description: "No further testing required" },
+            ];
+
+            for (const label of labels) {
+              try {
+                await github.rest.issues.updateLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: label.name,
+                  color: label.color,
+                  description: label.description,
+                });
+                core.info(`Updated label: ${label.name}`);
+              } catch (error) {
+                if (error.status !== 404) throw error;
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  ...label,
+                });
+                core.info(`Created label: ${label.name}`);
+              }
+            }

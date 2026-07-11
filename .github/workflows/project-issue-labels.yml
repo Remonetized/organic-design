@@ -1,0 +1,51 @@
+name: GitBan Project - Issue Labels
+
+on:
+  issues:
+    types: [labeled, unlabeled]
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  move-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out automation scripts
+        uses: actions/checkout@v7
+
+      - name: Move issue from workflow labels
+        uses: actions/github-script@v9
+        env:
+          GITBAN_PROJECT_NUMBER: ${{ vars.GITBAN_PROJECT_NUMBER }}
+          GITBAN_PROJECT_OWNER: ${{ vars.GITBAN_PROJECT_OWNER }}
+          GITBAN_PROJECT_OWNER_TYPE: ${{ vars.GITBAN_PROJECT_OWNER_TYPE }}
+          GITBAN_STATUS_FIELD: ${{ vars.GITBAN_STATUS_FIELD }}
+          GITBAN_HOTFIX_STATUS: ${{ vars.GITBAN_HOTFIX_STATUS }}
+          GITBAN_IN_PROGRESS_STATUS: ${{ vars.GITBAN_IN_PROGRESS_STATUS }}
+          GITBAN_BLOCKED_STATUS: ${{ vars.GITBAN_BLOCKED_STATUS }}
+          GITBAN_START_DATE_FIELD: ${{ vars.GITBAN_START_DATE_FIELD }}
+        with:
+          github-token: ${{ secrets.GITBAN_PROJECT_TOKEN || secrets.GITBAN_PAT || secrets.BRANCHFLOW_PAT || github.token }}
+          script: |
+            const labelName = context.payload.label?.name;
+            const action = context.payload.action;
+            const automation = require("./.github/scripts/project-automation.js")({ github, context, core });
+
+            if (action === "labeled" && labelName === "status: blocked") {
+              await automation.moveIssueToBlocked();
+              return;
+            }
+
+            if (action === "unlabeled" && labelName === "status: blocked") {
+              await automation.moveIssueToInProgress();
+              return;
+            }
+
+            if (action === "labeled" && labelName === "type: hotfix") {
+              await automation.moveIssueToHotfix();
+              return;
+            }
+
+            core.info(`No project move configured for ${action} label: ${labelName}`);

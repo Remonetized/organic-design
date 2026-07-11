@@ -1,0 +1,40 @@
+name: Feature
+description: Plan a small, testable unit of product work.
+title: "[Feature]: "
+labels: ["type: feature"]
+body:
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What problem are we solving, and who benefits?
+    validations:
+      required: true
+  - type: textarea
+    id: purpose
+    attributes:
+      label: Purpose
+      description: Why is this feature valuable now?
+  - type: textarea
+    id: requirements
+    attributes:
+      label: Functional Requirements
+      description: What should the implementation do?
+      value: |
+        - 
+        - 
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance Criteria
+      description: What must be true for this issue to be done?
+      value: |
+        - [ ] 
+        - [ ] 
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      description: Links, constraints, sketches, decisions, or related work.

@@ -1,0 +1,37 @@
+name: GitBan Project - Issue to In Progress
+
+on:
+  issues:
+    types: [assigned, edited]
+
+permissions:
+  contents: read
+  issues: read
+
+jobs:
+  move-issue:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out automation scripts
+        uses: actions/checkout@v7
+
+      - name: Move assigned issue to in progress
+        uses: actions/github-script@v9
+        env:
+          GITBAN_PROJECT_NUMBER: ${{ vars.GITBAN_PROJECT_NUMBER }}
+          GITBAN_PROJECT_OWNER: ${{ vars.GITBAN_PROJECT_OWNER }}
+          GITBAN_PROJECT_OWNER_TYPE: ${{ vars.GITBAN_PROJECT_OWNER_TYPE }}
+          GITBAN_STATUS_FIELD: ${{ vars.GITBAN_STATUS_FIELD }}
+          GITBAN_IN_PROGRESS_STATUS: ${{ vars.GITBAN_IN_PROGRESS_STATUS }}
+          GITBAN_START_DATE_FIELD: ${{ vars.GITBAN_START_DATE_FIELD }}
+        with:
+          github-token: ${{ secrets.GITBAN_PROJECT_TOKEN || secrets.GITBAN_PAT || secrets.BRANCHFLOW_PAT || github.token }}
+          script: |
+            if (context.payload.action === "edited" && !context.payload.changes?.assignees) {
+              core.info("Issue edit did not change assignees. Skipping.");
+              return;
+            }
+
+            const automation = require("./.github/scripts/project-automation.js")({ github, context, core });
+            await automation.moveIssueToInProgress();
+

@@ -1,0 +1,85 @@
+name: GitBan Reset Smoke Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      issue_number:
+        description: Issue number to reset
+        required: true
+        default: "1"
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  reset:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out automation scripts
+        uses: actions/checkout@v7
+
+      - name: Reset smoke-test issue
+        uses: actions/github-script@v9
+        env:
+          GITBAN_PROJECT_NUMBER: ${{ vars.GITBAN_PROJECT_NUMBER }}
+          GITBAN_PROJECT_OWNER: ${{ vars.GITBAN_PROJECT_OWNER }}
+          GITBAN_PROJECT_OWNER_TYPE: ${{ vars.GITBAN_PROJECT_OWNER_TYPE }}
+          GITBAN_STATUS_FIELD: ${{ vars.GITBAN_STATUS_FIELD }}
+          GITBAN_BACKLOG_STATUS: ${{ vars.GITBAN_BACKLOG_STATUS }}
+          GITBAN_START_DATE_FIELD: ${{ vars.GITBAN_START_DATE_FIELD }}
+          GITBAN_END_DATE_FIELD: ${{ vars.GITBAN_END_DATE_FIELD }}
+          GITBAN_TARGET_DATE_FIELD: ${{ vars.GITBAN_TARGET_DATE_FIELD }}
+        with:
+          github-token: ${{ secrets.GITBAN_PROJECT_TOKEN || secrets.GITBAN_PAT || secrets.BRANCHFLOW_PAT || github.token }}
+          script: |
+            const issueNumber = Number(context.payload.inputs?.issue_number || "1");
+            if (!Number.isInteger(issueNumber) || issueNumber < 1) {
+              core.setFailed(`Invalid issue_number: ${context.payload.inputs?.issue_number}`);
+              return;
+            }
+
+            const automation = require("./.github/scripts/project-automation.js")({ github, context, core });
+
+            const { data: issue } = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+            });
+
+            if (issue.state !== "open") {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                state: "open",
+              });
+              core.info(`Reopened issue #${issueNumber}.`);
+            }
+
+            const labelsToRemove = ["status: blocked", "type: hotfix"];
+            const existingLabels = new Set(issue.labels.map((label) => label.name));
+            for (const label of labelsToRemove) {
+              if (!existingLabels.has(label)) continue;
+              await github.rest.issues.removeLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                name: label,
+              });
+              core.info(`Removed ${label}.`);
+            }
+
+            const assignees = issue.assignees.map((assignee) => assignee.login);
+            if (assignees.length) {
+              await github.rest.issues.removeAssignees({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issueNumber,
+                assignees,
+              });
+              core.info(`Removed assignees: ${assignees.join(", ")}.`);
+            }
+
+            await automation.resetIssueToBacklog(issue.node_id);
+            core.info(`Reset issue #${issueNumber} to Backlog.`);
