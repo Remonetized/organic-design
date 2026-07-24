@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: ci / lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Template lint placeholder
+        run: |
+          echo "Add project-specific lint commands here."
+
+  test:
+    name: ci / test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Template test placeholder
+        run: |
+          echo "Add project-specific test commands here."
+
+  build:
+    name: ci / build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Template build placeholder
+        run: |
+          echo "Add project-specific build commands here."
+
