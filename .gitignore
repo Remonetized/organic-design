@@ -1,0 +1,23 @@
+# LaTeX build artefacts
+MSc/*.aux
+MSc/*.bbl
+MSc/*.bcf
+MSc/*.blg
+MSc/*.fdb_latexmk
+MSc/*.fls
+MSc/*.glo
+MSc/*.glg
+MSc/*.gls
+MSc/*.ist
+MSc/*.lof
+MSc/*.log
+MSc/*.lot
+MSc/*.out
+MSc/*.run.xml
+MSc/*.synctex.gz
+MSc/*.toc
+MSc/main.pdf
+
+# macOS metadata from imported templates
+.DS_Store
+MSc/.DS_Store
