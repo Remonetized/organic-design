@@ -1,5 +1,11 @@
 # Dissertation lives in its own repo now
 MSc/
 
+# Node/Vite build artefacts
+node_modules/
+dist/
+.env
+.env.local
+
 # macOS metadata from imported templates
 .DS_Store
