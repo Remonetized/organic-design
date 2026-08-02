@@ -4,6 +4,7 @@ MSc/
 # Node/Vite build artefacts
 node_modules/
 dist/
+.vite/
 .env
 .env.local
 
