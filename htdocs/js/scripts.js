@@ -28,15 +28,15 @@ function divFunc(id) {
         case 'Rectangular Curved':
             divGenCurve(id);
             break;
-        case 'Rectangular Jagged':
-            divGenJagged(id);
-            break;
+        // case 'Rectangular Jagged':
+        //     divGenJagged(id);
+        //     break;
         case 'Circular':
             divGenCircle(id);
             break;
-        case 'Circular Jagged':
-            divGenCircleWavy(id);
-            break;        
+        // case 'Circular Jagged':
+        //     divGenCircleWavy(id);
+        //     break;        
         default:
             divGen(id);
             break;
@@ -555,3 +555,6 @@ function showCode(coords, polygonCoords, style, height, width, contHeight) {
     }
     document.getElementById('divSASS').innerHTML = sass; 
 }
+
+window.onload = divFunc('orgDiv');
+
