@@ -1,0 +1,16 @@
+@use '../utilities/colours' as *;
+
+.sidebar {
+    width: 190px;
+}
+
+@media (max-width: 991.98px) {
+    .sidebar {
+      width: 100%;
+    }
+}
+
+.w3-bar-item.active {
+    background-color: $bs-blue;
+    color: white;
+}

@@ -1,0 +1,28 @@
+// Heading for style.css files
+@use 'utilities/heading' as *;
+
+// Use custom colours
+@use 'utilities/colours' as *;
+
+// Import Bootstrap
+@use '../node_modules/bootstrap/scss/bootstrap' with (
+    $h1-font-size: 1.2rem,
+    $h2-font-size: 1.1rem,
+    $h3-font-size: 1rem,
+    $h4-font-size: .9rem,
+    $h5-font-size: .8rem,
+    $h6-font-size: .7rem
+);
+
+// Import W3.CSS
+@use 'vendors/w3' as *;
+
+// Fixes
+@use 'vendors/w3-fixes' as *;
+@use 'vendors/bs-fixes' as *;
+
+// Custom
+@use 'utilities/base' as *;
+@use 'utilities/breakpoints' as *;
+@use 'components/' as *;
+@use 'pages/' as *;
