@@ -3,9 +3,23 @@
     height: 500px;
     overflow: hidden;
   }
-  #orgDiv {
+ #orgDiv {
     width: 20px;
     height: 20px;
     float: left; 
     background-color: black;
   }  
+
+.copyAlert {
+    display: none;
+    position: absolute;
+    right: 0;
+    z-index: 10;
+    opacity: .8;
+    .btn-close {
+      margin: .5rem;
+      padding: .25rem;
+      width: .25rem;
+      height: .25rem;
+    }
+  }

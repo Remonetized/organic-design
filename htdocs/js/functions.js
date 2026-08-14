@@ -33,4 +33,21 @@ function closeModal(modalID) {
           modal[i].style.display="none";
       }
     }
+}
+
+function copyCode(id) {
+    var txtCode = document.getElementById(id).innerText;
+    var alert = document.getElementById(id + 'copy');
+    var alertMsg = document.getElementById(id + 'alert');
+    alert.style.display = "block";
+    navigator.clipboard.writeText(txtCode).then(
+      () => {
+        // alert('copied');        
+        alertMsg.innerHTML = "Copied to clipboard."
+      },
+      () => {
+        // alert('failed');
+        alertMsg.innerHTML = "Unable to copy";
+      },
+    );
   }

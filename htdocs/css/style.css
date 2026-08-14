@@ -13787,4 +13787,18 @@ body {
   background-color: black;
 }
 
+.copyAlert {
+  display: none;
+  position: absolute;
+  right: 0;
+  z-index: 10;
+  opacity: 0.8;
+}
+.copyAlert .btn-close {
+  margin: 0.5rem;
+  padding: 0.25rem;
+  width: 0.25rem;
+  height: 0.25rem;
+}
+
 /*# sourceMappingURL=style.css.map */
