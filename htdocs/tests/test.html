@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+<style> button { display: none; } </style>
+
+
+
+
+<svg width="300" height="300" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 50 50 V 150 H 150" stroke="black" fill="transparent" />
+    <path d="M 50 50 C 30 80, 30 120, 50 150" stroke="red" fill="transparent" />
+    <path d="M 50 50 C 30 120, 80 170, 150 150" stroke="blue" fill="transparent" />
+    
+    <!-- <path d="M 50 50 L 30 80" stroke="green" fill="transparent" /> -->
+    <!-- <path d="M 50 150 L 30 120" stroke="green" fill="transparent" /> -->
+    
+    <path d="M 50 50 L 30 120" stroke="green" fill="transparent" />
+    <path d="M 150 150 L 80 170" stroke="green" fill="transparent" />
+    
+  </svg>
+  <svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+    <g id="reference"></g>
+  </svg>
+  <button>Show/hide reference points and lines</button>
+  
+  <script>
+    const g = document.querySelector("#reference");
+const svg = document.querySelector("svg");
+const button = document.querySelector("button");
+
+// prettier-ignore
+const points = [
+  [[10, 10], [20, 20], [40, 20], [50, 10]],
+  [[70, 10], [70, 20], [110, 20], [110, 10]],
+  [[130, 10], [120, 20], [180, 20], [170, 10]],
+  [[10, 60], [20, 80], [40, 80], [50, 60]],
+  [[70, 60], [70, 80], [110, 80], [110, 60]],
+  [[130, 60], [120, 80], [180, 80], [170, 60]],
+  [[10, 110], [20, 140], [40, 140], [50, 110]],
+  [[70, 110], [70, 140], [110, 140], [110, 110]],
+  [[130, 110], [120, 140], [180, 140], [170, 110]],
+];
+
+for (const curvePoints of points) {
+  for (const p of curvePoints) {
+    const circle = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "circle",
+    );
+    circle.setAttribute("cx", p[0]);
+    circle.setAttribute("cy", p[1]);
+    circle.setAttribute("r", 1.5);
+    circle.setAttribute("fill", "red");
+    g.appendChild(circle);
+  }
+  const line1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line1.setAttribute("x1", curvePoints[0][0]);
+  line1.setAttribute("y1", curvePoints[0][1]);
+  line1.setAttribute("x2", curvePoints[1][0]);
+  line1.setAttribute("y2", curvePoints[1][1]);
+  line1.setAttribute("stroke", "red");
+  g.appendChild(line1);
+  const line2 = document.createElementNS("http://www.w3.org/2000/svg", "line");
+  line2.setAttribute("x1", curvePoints[2][0]);
+  line2.setAttribute("y1", curvePoints[2][1]);
+  line2.setAttribute("x2", curvePoints[3][0]);
+  line2.setAttribute("y2", curvePoints[3][1]);
+  line2.setAttribute("stroke", "red");
+  g.appendChild(line2);
+}
+
+let isHidden = true;
+button.addEventListener("click", () => {
+  isHidden = !isHidden;
+  if (isHidden) {
+    svg.querySelector("#reference").remove();
+  } else {
+    svg.appendChild(g.cloneNode(true));
+  }
+});
+
+  </script>
+</body>
+</html>
