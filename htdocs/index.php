@@ -47,15 +47,15 @@
               <div class="col-6">
                 <select class="form-select" name="style" id="style">
                   <!-- <option>Normal</option> -->
-                  <option>Rectangular Jagged</option>
                   <option>Rectangular Curved</option>
+                  <option>Rectangular Jagged</option>
                   <option>Circular</option>
                 </select>
               </div>
             </div>
             <div class="row mt-2">
               <div class="col-6"><label for="divDetail" class="form-label">Edge Detail</label></div>
-              <div class="col-6"><input type="range" class="form-range" min="1" max="13" step="2" id="divDetail"></div>
+              <div class="col-6"><input type="range" class="form-range" min="2" max="14" step="2" id="divDetail"></div>
             </div>
             <div class="row mt-2">
               <div class="col-6"><label for="divVariation" class="form-label">Edge Variation</label></div>

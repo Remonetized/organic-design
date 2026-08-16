@@ -45,42 +45,40 @@ function divFunc(id) {
     // divGenJagged(id);
 }
 
-function segmentLine(length, detail, lineDev) {
+function segmentLine(length, detail, lineDev, minimum = 4) {
     let tempVal = 0;
     let tempLength = 0;
     let tempSegments = [];
     for(let i = 0; i < detail; i++) {
-        if (i > 0) {
-            // Skip the first loop, no subtraction needed
-            tempLength = length - tempVal;
+        // Skip the first loop, no subtraction needed
+        if (i > 0) { 
             // Subtract previous tempVal 
-            // console.log("1st tempLength = lineSegmentLength + tempVal", tempLength, " = ", lineSegmentLength, " + ", tempVal);
-            // logStr += " Stored tempVal: " + tempVal;
-            // logStr += " tempLength:" + tempLength;
+            tempLength = length - tempVal; 
         }
-        if (i < (detail -1)) {
-            // Skip the last loop, no addition needed
+        // Skip the last loop, no addition needed
+        if (i < (detail -1)) {           
             tempVal = intRandom(-lineDev, lineDev);
             if (i == 0) tempLength = length;
             // Get random deviation
             tempLength += tempVal;
-            // console.log("2nd tempLength = lineSegmentLength + tempVal", tempLength, " = ", lineSegmentLength, " + ", tempVal);
-            // logStr += " New tempVal:" + tempVal;
-            // logStr += " tempLength:" + tempLength;
         }
-
+        // Set minimum threshold to prevent negative values
+        tempLength = Math.max(tempLength, minimum)
         tempSegments.push(tempLength);
-        // console.log(logStr);
-        // logStr = "";
     }
     return tempSegments;
+}
+
+function deviate(deviation, max, min=1, asRange = false) {
+    let minimum = Math.max(min, Math.ceil(max / deviation));
+    return asRange ? (max - minimum) : intRandom(minimum, max);
 }
 
 function setDimensions(id) {
     // Get detail
     let edgeDetail = parseInt(document.getElementById('divDetail').value);
     let edgeVariation = parseInt(document.getElementById('divVariation').value);
-    let deviation = 7 - (parseInt(document.getElementById('deviation').value));
+    let deviation = parseInt(document.getElementById('deviation').value);
     // set co-ordinates x start, x end, y start, y end
     let xs = edgeVariation + 20;
     let ys = edgeVariation + 20;
@@ -92,24 +90,254 @@ function setDimensions(id) {
     let containerHeight = (height + edgeVariation + 70) + 'px';
     document.getElementById((id + 'Container')).style.height = containerHeight; 
 
-    return [xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight];
+    return {xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight};
 }
 
 function divGenCurve(id) {
-    console.clear();
+        // Set drawing dimensions from form input
+        let {xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight} = setDimensions(id);
+        console.clear(); console.log({xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight});
 
-    let [xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, containerHeight] = setDimensions(id);
-    console.log({xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, containerHeight});
+        // decrement edgeDetail because the number of curved lines will be odd to make it vertically symmetrical
+        if (edgeDetail > 1) edgeDetail++;
 
-    // calculate line divisions
-    let lineSegmentHeight = Math.floor(height / edgeDetail);
-    console.log(edgeDetail);
+        // Set margin for whichever value is larger to avoid clipping
+        let margin = (edgeDetail > edgeVariation)? edgeDetail: edgeVariation;
+        
+        // Set initial x, y co-ordinates
+        let coords = xs + ' ' + ys;
+        let polygonCoords = [xs.toString() + 'px ' + ys.toString() + 'px'];
+        
+        // 1st line: xs, ys - xs, ye
+        let x1 = xs, x2, x3, x4;
+        let y1 = ys, y2, y3, y4;
+        let switchVar = false; 
+        
+        // 1st line: xs, ys - xs, ye (placeholder)
+        // coords += ' L ' + xs.toString() + ' ' + ye.toString();
+        // polygonCoords.push(xe.toString() + 'px ' + ye.toString() + 'px');
+
+        // Length of lines
+        let lineSegmentLength = height / edgeDetail;
+        
+        // Amount line lengths change. Maximum 50% of total length
+        let lineDev = deviate(deviation, lineSegmentLength, 1, true) * .5;
+
+        // Initialise and populate segment length array
+        let segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
+    
+        let moveFw, coordSide, coordFw, maxFw;
+
+        for(let i = 0; i < edgeDetail; i++) {
+            // Get line segment length
+            moveFw = Math.ceil(segments[i]);
+            // Cap the control points so they don't cross over 
+            maxFw = Math.max(1, Math.floor(moveFw / 2) - 1);
+            // Fetch a random value up to the maximum
+            coordFw = deviate(deviation, maxFw);
+            coordSide = deviate(deviation, edgeVariation);
+            (switchVar == false) ? x2 = xs - coordSide : x2 = xs + coordSide;
+            switchVar = !switchVar;
+            x3 = x2;
+            x4 = xs;
+            y2 = y1 + coordFw;
+            y3 = y1 + moveFw - coordFw;
+            y4 = y1 + moveFw;
+            tempCoords = ' C ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3 + ' ' + x4 + ' ' + y4;
+            coords += tempCoords;
+            polygonCoords.push(x2.toString() + 'px ' + y2.toString() + 'px');
+            polygonCoords.push(x3.toString() + 'px ' + y3.toString() + 'px');
+            polygonCoords.push(x4.toString() + 'px ' + y4.toString() + 'px');
+            y1 = y4;
+        }
+
+        // 2nd line: xs, ye - xe, ye
+        // coords += ' L ' + xe.toString() + ' ' + ye.toString();
+        // polygonCoords.push(xe.toString() + 'px ' + ye.toString() + 'px');
+
+        x1 = xs;
+        y1 = ye;
+        switchVar = false; 
+        
+        // Length of lines
+        lineSegmentLength = width / edgeDetail;
+        
+        // Amount line lengths change. Maximum 50% of total length
+        lineDev = deviate(deviation, lineSegmentLength, 1, true) * .5;
+
+        // Initialise and populate segment length array
+        segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
+
+        for(let i = 0; i < edgeDetail; i++) {
+            // Get line segment length
+            moveFw = Math.ceil(segments[i]);
+            // Cap the control points so they don't cross over 
+            maxFw = Math.max(1, Math.floor(moveFw / 2) - 1);
+            // Fetch a random value up to the maximum
+            coordFw = deviate(deviation, maxFw);
+            coordSide = deviate(deviation, edgeVariation);
+            (switchVar == false) ? y2 = ye + coordSide : y2 = ye - coordSide;
+            switchVar = !switchVar;
+            x2 = x1 + coordFw;
+            x3 = x1 + moveFw - coordFw;
+            x4 = x1 + moveFw;
+            y3 = y2;
+            y4 = ye;
+            tempCoords = ' C ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3 + ' ' + x4 + ' ' + y4;
+            coords += tempCoords;
+            polygonCoords.push(x2.toString() + 'px ' + y2.toString() + 'px');
+            polygonCoords.push(x3.toString() + 'px ' + y3.toString() + 'px');
+            polygonCoords.push(x4.toString() + 'px ' + y4.toString() + 'px');
+            x1 = x4;
+        }        
+
+        // 3rd line: xe, ye - xe, ys
+        // coords += ' L ' + xe.toString() + ' ' + ys.toString();
+        // polygonCoords.push(xe.toString() + 'px ' + ys.toString() + 'px');
+
+        x1 = xe;
+        y1 = ye;
+        switchVar = false; 
+        
+        // Length of lines
+        lineSegmentLength = height / edgeDetail;
+        
+        // Amount line lengths change. Maximum 50% of total length
+        lineDev = deviate(deviation, lineSegmentLength, 1, true) * .5;
+
+        // Initialise and populate segment length array
+        segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
+
+        for(let i = 0; i < edgeDetail; i++) {
+            // Get line segment length
+            moveFw = Math.ceil(segments[i]);
+            // Cap the control points so they don't cross over 
+            maxFw = Math.max(1, Math.floor(moveFw / 2) - 1);
+            // Fetch a random value up to the maximum
+            coordFw = deviate(deviation, maxFw);
+            coordSide = deviate(deviation, edgeVariation);
+            (switchVar == false) ? x2 = xe + coordSide : x2 = xe - coordSide;
+            switchVar = !switchVar;
+            y2 = y1 - coordFw;
+            y3 = y1 - moveFw + coordFw;
+            y4 = y1 - moveFw;
+            x3 = x2;
+            x4 = xe;
+            tempCoords = ' C ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3 + ' ' + x4 + ' ' + y4;
+            coords += tempCoords;
+            polygonCoords.push(x2.toString() + 'px ' + y2.toString() + 'px');
+            polygonCoords.push(x3.toString() + 'px ' + y3.toString() + 'px');
+            polygonCoords.push(x4.toString() + 'px ' + y4.toString() + 'px');
+            y1 = y4;
+        }
+
+        //  4th line: xe, ys - xs, ys
+        // coords += ' L ' + xs.toString() + ' ' + ys.toString();
+        // polygonCoords.push(xs.toString() + 'px ' + ys.toString() + 'px');
+
+        x1 = xe;
+        y1 = ys;
+        switchVar = false; 
+        
+        // Length of lines
+        lineSegmentLength = width / edgeDetail;
+        
+        // Amount line lengths change. Maximum 50% of total length
+        lineDev = deviate(deviation, lineSegmentLength, 1, true) * .5;
+
+        // Initialise and populate segment length array
+        segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
+
+        for(let i = 0; i < edgeDetail; i++) {
+            // Get line segment length
+            moveFw = Math.ceil(segments[i]);
+            // Cap the control points so they don't cross over 
+            maxFw = Math.max(1, Math.floor(moveFw / 2) - 1);
+            // Fetch a random value up to the maximum
+            coordFw = deviate(deviation, maxFw);
+            coordSide = deviate(deviation, edgeVariation);
+            
+            // console.log("moveFw: " + moveFw + " coordSide :" + coordSide + " coordFw: " + coordFw);
+            (switchVar == false) ? y2 = ys - coordSide : y2 = ys + coordSide;
+            switchVar = !switchVar;
+            x2 = x1 - coordFw;
+            x3 = x1 - moveFw + coordFw;
+            x4 = x1 - moveFw;
+            y3 = y2;
+            y4 = ys;
+            tempCoords = ' C ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3 + ' ' + x4 + ' ' + y4;
+            coords += tempCoords;
+            polygonCoords.push(x2.toString() + 'px ' + y2.toString() + 'px');
+            polygonCoords.push(x3.toString() + 'px ' + y3.toString() + 'px');
+            polygonCoords.push(x4.toString() + 'px ' + y4.toString() + 'px');
+            x1 = x4;
+            console.log(tempCoords);
+        }
+
+        let curve = 'path("M ' + coords + ' Z")';
+        let polygon = 'polygon(' + polygonCoords.toString() + ')';
+        document.getElementById(id).style.clipPath = curve;
+        document.getElementById(id).style.shapeOutside = polygon;    
+    
+        // console.clear();
+        // console.log(curve);
+        // console.log(polygon);
+
+        // Set divs height by maximum y value
+        let divHeight = (ye + margin + 10) + 'px';
+        // Set divs width by maximum x value
+        let divWidth = (xe + margin + 10) + 'px';
+        
+        document.getElementById(id).style.height = divHeight;
+        document.getElementById(id).style.width = divWidth;
+    
+        showCode(coords, polygonCoords, 'curved', divHeight, divWidth, containerHeight);
+}
+
+function divGenCurveBAK(id) {
+    // Set drawing dimensions from form input
+    let {xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, containerHeight} = setDimensions(id);
+
+    let polygonCoords = [xs.toString() + 'px ' + ys.toString() + 'px'];
+    let coordsStr = 'M ' + xs + ' ' + ys;
+    let tempCoords = "";
+
+    // Length of lines
+    let lineSegmentLength = height / edgeDetail;
+    // Amount line lengths change
+    let lineDev = lineSegmentLength / deviation;
+
+    let segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
+
+    let coordSide, xRound, yRound;
+    let x1, x2, x3, y1, y2, y3;
+
+    for(let i = 0; i < edgeDetail; i++) {
+        coordSide = intRandom(2, edgeVariation);
+
+        y1 += segments[i];
+        x1 = xs + coordSide;
+        if(y1 > ye) y1 = ye;
+        xRound = Math.ceil(x1);
+        yRound = Math.ceil(y1);
+        coordsStr += xRound.toString() + 'px ' + yRound.toString() + 'px';
+    }
+
+    coordsStr += xs.toString() + 'px ' + ys.toString() + 'px';
+    coordsStr += xs.toString() + 'px ' + ye.toString() + 'px';
+    coordsStr += xe.toString() + 'px ' + ye.toString() + 'px';
+    coordsStr += xe.toString() + 'px ' + ys.toString() + 'px';
+    coordsStr += xs.toString() + 'px ' + ys.toString() + 'px';
+
 }
 
 function divGenJagged(id) {
     // Set drawing dimensions from form input
-    let [xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight] = setDimensions(id);
+    let {xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight} = setDimensions(id);
 
+    // invert the value of deviation, so 1 -> 6, 2 -> 5..
+    deviation = 7 - deviation;
+    
     // Initialise arrays
     let coords = [];
     let segments = [];
@@ -118,7 +346,7 @@ function divGenJagged(id) {
     
     // Set initial x, y co-ordinates
     coords = [xs, ys];
-    const coordsStr = [xs.toString() + 'px ' + ys.toString() + 'px'];
+    let coordsStr = [xs.toString() + 'px ' + ys.toString() + 'px'];
     
     // 1st line: xs, ys - xs, ye
     x = xs;
@@ -132,17 +360,19 @@ function divGenJagged(id) {
     
     segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
 
-    let mvSide, xRound, yRound;
+    let coordSide, xRound, yRound;
 
     for(let i = 0; i < edgeDetail; i++) {
-        mvSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
+        coordSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
         y += segments[i];
-        x = xs + mvSide;
+        x = xs + coordSide;
         if(y > ye) y = ye;
         xRound = Math.ceil(x);
         yRound = Math.ceil(y);
         coordsStr.push(xRound.toString() + 'px ' + yRound.toString() + 'px');
     }
+
+    // coordsStr.push(xs.toString() + 'px ' + ye.toString() + 'px');
 
     // Set divs height by maximum y value
     let divHeight = (ye + margin + 10) + 'px';
@@ -159,9 +389,9 @@ function divGenJagged(id) {
     segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
 
     for(let i = 0; i < edgeDetail; i++) {
-        mvSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
+        coordSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
         x += segments[i];
-        y = ye + mvSide;
+        y = ye + coordSide;
         if(x > xe) x = xe;
         xRound = Math.ceil(x);
         yRound = Math.ceil(y);
@@ -182,9 +412,9 @@ function divGenJagged(id) {
     segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
 
     for(let i = 0; i < edgeDetail; i++) {
-        mvSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
+        coordSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
         y -= segments[i];
-        x = xe + mvSide;
+        x = xe + coordSide;
         if(y < ys) y = ys;
         xRound = Math.ceil(x);
         yRound = Math.ceil(y);
@@ -203,9 +433,9 @@ function divGenJagged(id) {
     segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
 
     for(let i = 0; i < (edgeDetail -1); i++) {
-        mvSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
+        coordSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
         x -= segments[i];
-        y = ys + mvSide;
+        y = ys + coordSide;
         if(x < xs) x = xs;
         xRound = Math.ceil(x);
         yRound = Math.ceil(y);
@@ -222,342 +452,6 @@ function divGenJagged(id) {
     document.getElementById(id).style.width = divWidth;
 
     showCode(coordsStr, '', 'jagged', height, width, containerHeight);
-}
-
-function divGenJaggedBAK(id) {
-    // Set drawing dimensions from form input
-    let [xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight] = setDimensions(id);
-    console.clear();
-    console.log({xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight});
-    // Initialise arrays
-    let coords = [];
-    let segments = [];
-    // Set margin for whichever value is larger to avoid clipping
-    let margin = (edgeDetail > edgeVariation)? edgeDetail: edgeVariation;
-    
-    // Set initial x, y co-ordinates
-    coords = [xs, ys];
-    const coordsStr = [xs.toString() + 'px ' + ys.toString() + 'px'];
-    
-    // 1st line: xs, ys - xs, ye
-    x = xs;
-    y = ys;
-
-    // calculate line divisions
-    // Length of lines
-    let lineSegmentLength = height / edgeDetail;
-    // Amount line lengths change
-    let lineDev = lineSegmentLength / deviation;
-    
-    segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
-
-    let mvSide, xRound, yRound;
-
-    for(let i = 0; i < edgeDetail; i++) {
-        mvSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
-        y += segments[i];
-        x = xs + mvSide;
-        if(y > ye) y = ye;
-        xRound = Math.ceil(x);
-        yRound = Math.ceil(y);
-        coordsStr.push(xRound.toString() + 'px ' + yRound.toString() + 'px');
-        // coordsStr.push(x.toString() + 'px ' + y.toString() + 'px');
-    }
-    // br = false;
-    // while (br == false) {
-    //     // mvFw = intRandom(1,intRandom(1, edgeDetail));
-    //     mvFw = lineSegmentHeight;
-    //     mvSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
-    //     y += mvFw;
-    //     x = xs + mvSide;
-    //     if (y >= ye) { x = xs; y = ye; br = true; }
-    //     coordsStr.push(x.toString() + 'px ' + y.toString() + 'px');
-    // }
-    // let tempVal = 0;
-    // let tempLength = 0;
-    
-    
-    // console.log("line length:", lineSegmentLength);
-    // console.log("line deviation:", lineDev);
-    
-    // for(let i = 0; i < edgeDetail; i++) {
-    //     if (i > 0) {
-    //         // Skip the first loop, no subtraction needed
-    //         tempLength = lineSegmentLength - tempVal;
-    //         // Subtract previous tempVal 
-    //         // console.log("1st tempLength = lineSegmentLength + tempVal", tempLength, " = ", lineSegmentLength, " + ", tempVal);
-    //         logStr += " Stored tempVal: " + tempVal;
-    //         logStr += " tempLength:" + tempLength;
-    //     }
-    //     if (i < (edgeDetail -1)) {
-    //         // Skip the last loop, no addition needed
-    //         tempVal = intRandom(-lineDev, lineDev);
-    //         if (i == 0) tempLength = lineSegmentLength;
-    //         // Get random deviation
-    //         tempLength += tempVal;
-    //         // console.log("2nd tempLength = lineSegmentLength + tempVal", tempLength, " = ", lineSegmentLength, " + ", tempVal);
-    //         logStr += " New tempVal:" + tempVal;
-    //         logStr += " tempLength:" + tempLength;
-    //     }
-
-    //     segments.push(tempLength);
-    //     console.log(logStr);
-    //     logStr = "";
-    // }
-
-    segments.forEach((e) => console.log(e));
-    let countLen = 0;
-    segments.forEach((e) => countLen += Number(e));
-    console.log(countLen);
-
-    
-
-    // for (let i =1; i <= edgeDetail; i++) {
-    //     console.log(i);
-    //     mvSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
-    //     y += lineSegmentLength;
-    //     x = xs + mvSide;
-    //     coordsStr.push(x.toString() + 'px ' + y.toString() + 'px');
-    // }
-    // coordsStr.push(xs.toString() + 'px ' + ye.toString() + 'px');
-    
-    // Set divs height by maximum y value
-    let divHeight = (ye + margin + 10) + 'px';
-
-    // 2nd line: xs, ye - xe, ye
-    x = xs;
-    y = ye;
-    // br = false;
-    // while (br == false) {
-    //     // mvFw = intRandom(1,intRandom(1, edgeDetail));
-    //     mvFw = lineSegmentHeight;
-    //     mvSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
-    //     x += mvFw;
-    //     y = ye + mvSide;
-    //     if (x >= xe) { x = xe; y = ye; br = true; }
-    //     coords.push(x.toString() + 'px ' + y.toString() + 'px');
-    // }
-    coordsStr.push(xs.toString() + 'px ' + ye.toString() + 'px');
-    coordsStr.push(xe.toString() + 'px ' + ye.toString() + 'px');
-
-    // Set divs width by maximum x value
-    let divWidth = (xe + margin + 10) + 'px';
-
-    // 3rd line: xe, ye - xe, ys
-    x = xe;
-    y = ye;
-    // br = false;
-    // while (br == false) {
-    //     // mvFw = intRandom(1,intRandom(1, edgeDetail));
-    //     mvFw = lineSegmentHeight;
-    //     mvSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
-    //     y -= mvFw;
-    //     x = xe + mvSide;
-    //     if (y <= ys) { x = xe; y = ys; br = true; }
-    //     coords.push(x.toString() + 'px ' + y.toString() + 'px');
-    // }
-    // coordsStr.push(xe.toString() + 'px ' + ye.toString() + 'px');
-    // coordsStr.push(xe.toString() + 'px ' + ys.toString() + 'px');
-
-
-    lineSegmentLength = height / edgeDetail;
-    // Amount line lengths change
-    lineDev = lineSegmentLength / deviation;
-    
-    segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
-
-    for(let i = 0; i < edgeDetail; i++) {
-        mvSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
-        y -= segments[i];
-        x = xe + mvSide;
-        if(y < ys) y = ys;
-        xRound = Math.ceil(x);
-        yRound = Math.ceil(y);
-        coordsStr.push(xRound.toString() + 'px ' + yRound.toString() + 'px');
-        // coordsStr.push(x.toString() + 'px ' + y.toString() + 'px');
-    }
-
-    //  4th line: xe, ys - xs, ys
-    x = xe;
-    y = ys;
-    // br = false;
-    // while (br == false) {
-    //     // mvFw = intRandom(1,intRandom(1, edgeDetail));
-    //     mvFw = lineSegmentHeight;
-    //     mvSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
-    //     x -= mvFw;
-    //     y = ys + mvSide;
-    //     if (x <= xs) { x = xs; y = ys; br = true; }
-    //     coords.push(x.toString() + 'px ' + y.toString() + 'px');
-    // }
-    coordsStr.push(xe.toString() + 'px ' + ys.toString() + 'px');
-    coordsStr.push(xs.toString() + 'px ' + ys.toString() + 'px');
-    
-    let polygon = 'polygon(' + coordsStr.toString() + ')';
-    document.getElementById(id).style.clipPath = polygon;
-    document.getElementById(id).style.shapeOutside = polygon;    
-    
-    document.getElementById(id).style.height = divHeight;
-    document.getElementById(id).style.width = divWidth;
-
-    showCode(coordsStr, '', 'jagged', height, width, containerHeight);
-}
-
-function divGenCurveBAK(id) {
-    let curveCountVert = 0;
-    let curveCountHor = 0;
-
-    let [xs, ys, xe, ye, height, width, divDetail, divVariation, containerHeight] = setDimensions(id);
-
-    xs += 10; ys += 10;  // console.log(ys); console.log(ye)
-
-    ys += (divDetail);
-    // ye -= (divDetail / 2);
-
-    // console.log(ys); console.log(ye)
-
-    let coords = 'M ' + xs + ' ' + ys;
-    const polygonCoords = [xs.toString() + 'px ' + ys.toString() + 'px'];
-
-    // Variables:
-    // MoveFw is the total amount to move forward in that curve. Based on the 'div detail' level selected
-    // coordSide determines how far to the side from the path the coordinate will be set, determined by div variation setting
-    // CoordFw is a fraction of MoveFw inset from the start and finish 
-    // Polygon stores a polygonal line to apply to shape-outside
-    
-    // 1st line: xs, ys - xs, ye
-    let br = false; // set break = false
-    let switchVar = false; // Switchvar will alternate between true and false to curve the path in alternating directions
-    while (br == false) {        
-        moveFw = intRandom(20,intRandom(20, divDetail));
-        coordSide = intRandom(2, divVariation);
-        coordFw = intRandom(0, 10);
-        if (ys >= (height - 10) && switchVar == false) { br = true; }
-        (switchVar == false) ? x1 = xs - coordSide : x1 = xs + coordSide;
-        switchVar = !switchVar;
-        x2 = x1;
-        y1 = ys + coordFw;
-        y2 = ys + moveFw - coordFw;
-        x3 = xs;
-        y3 = ys + moveFw;
-
-        // console.clear;
-        // console.log("---");
-        if (br == true) {
-            // console.log({x2, y2, x3, y3, moveFw, coordFw, coordSide});
-            y1 = ys + moveFw - coordFw;
-            x2 = xs + coordFw;
-            y2 = ys + moveFw + coordSide;
-            x3 = xs + moveFw;
-            y3 = ys + moveFw;
-            // console.log("---");
-            // console.log({x2, y2, x3, y3});
-            // Smooth curve 
-            // tempCoords = ' S ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3;
-        }
-
-        tempCoords = ' C ' + x1 + ' ' + y1 + ' ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3;
-        // console.log(tempCoords);
-
-        polygonCoords.push(x1.toString() + 'px ' + y1.toString() + 'px');
-        polygonCoords.push(x2.toString() + 'px ' + y2.toString() + 'px');
-        polygonCoords.push(x3.toString() + 'px ' + y3.toString() + 'px');
-        coords += tempCoords;
-        ys = y3;
-        curveCountVert++;
-    }
-
-    let divHeight = (y3 +  divVariation + 50) + 'px';
-    // 2nd line: xs, ye - xe, ye
-    xs = x3;
-    ys = y3;
-    br = false;
-    switchVar = true;
-    while (br == false) {
-        moveFw = intRandom(30,intRandom(30, divDetail));
-        coordFw = intRandom(0, 10);
-        coordSide = intRandom(2, divVariation);
-        if (xs >= (width - 10) && switchVar == false) { br = true; }
-        (switchVar == true) ? y1 = ys - coordSide : y1 = ys + coordSide;
-        switchVar = !switchVar;
-        y2 = y1;
-        x1 = xs + coordFw;
-        x2 = xs + moveFw - coordFw;
-        y3 = ys;
-        x3 = xs + moveFw;
-        tempCoords = ' C ' + x1 + ' ' + y1 + ' ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3;
-        polygonCoords.push(x1.toString() + 'px ' + y1.toString() + 'px');
-        polygonCoords.push(x2.toString() + 'px ' + y2.toString() + 'px');
-        polygonCoords.push(x3.toString() + 'px ' + y3.toString() + 'px');
-        coords += tempCoords;
-        xs = x3;
-        curveCountHor++;
-    }
-    let divWidth = (x3 + 10) + 'px';
-    // 3rd line: xe, ye - xe, ys
-    xs = x3;
-    ys = y3;
-    br = false;
-    let count = 1;
-    switchVar = false;
-    while (br == false) {
-        moveFw = intRandom(20,intRandom(20, divDetail));
-        coordSide = intRandom(2, divVariation);
-        coordFw = intRandom(0, 10);
-        if (count >= curveCountVert && switchVar == false) br = true; 
-        (switchVar == true) ? x1 = xs - coordSide : x1 = xs + coordSide;
-        switchVar = !switchVar;
-        x2 = x1;
-        y1 = ys - coordFw;
-        y2 = ys - moveFw + coordFw;
-        x3 = xs;
-        y3 = ys - moveFw;
-        if (y1 < 0 || y2 < 0 || y3 < 0) { break; }
-        tempCoords = ' C ' + x1 + ' ' + y1 + ' ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3;
-        polygonCoords.push(x1.toString() + 'px ' + y1.toString() + 'px');
-        polygonCoords.push(x2.toString() + 'px ' + y2.toString() + 'px');
-        polygonCoords.push(x3.toString() + 'px ' + y3.toString() + 'px');
-        coords += tempCoords;
-
-        ys = y3;
-        count++;
-    }
-    //  4th line: xe, ys - xs, ys
-    xs = x3;
-    ys = y3;
-    br = false;
-    count = 1;
-    switchVar = false;
-    while (br == false) {
-        moveFw = intRandom(30,intRandom(30, divDetail));
-        coordFw = intRandom(0, 10);
-        coordSide = intRandom(2, divVariation);
-        if (count >= curveCountHor && switchVar == false) { br = true; }
-        (switchVar == false) ? y1 = ys - coordSide : y1 = ys + coordSide;
-        switchVar = !switchVar;
-        y2 = y1;
-        x1 = xs - coordFw;
-        x2 = xs - moveFw + coordFw;
-        y3 = ys;
-        x3 = xs - moveFw;
-        tempCoords = ' C ' + x1 + ' ' + y1 + ' ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3;
-        polygonCoords.push(x1.toString() + 'px ' + y1.toString() + 'px');
-        polygonCoords.push(x2.toString() + 'px ' + y2.toString() + 'px');
-        polygonCoords.push(x3.toString() + 'px ' + y3.toString() + 'px');
-        coords += tempCoords;
-        xs = x3;
-        count++;
-    }
-
-    let curvepath = 'path("' + coords + '")';
-    let polygonpath = 'polygon(' + polygonCoords.toString() + ')';
-    document.getElementById(id).style.clipPath = curvepath;
-    document.getElementById(id).style.shapeOutside = polygonpath;
-    document.getElementById(id).style.shapeInside = polygonpath;
-
-    document.getElementById(id).style.height = divHeight;
-    document.getElementById(id).style.width = divWidth;
-    showCode(coords, polygonCoords, 'curved', divHeight, divWidth, containerHeight);
 }
 
 function setLinePoints(iterations) {
