@@ -95,8 +95,18 @@ function setDimensions(id) {
 
 function divGenCurve(id) {
         // Set drawing dimensions from form input
-        let {xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight} = setDimensions(id);
-        console.log({xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight});
+        let xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight;
+        xs=36;
+        ys=36;
+        xe=236;
+        ye=236;
+        height=200;
+        width=200;
+        edgeDetail=8;
+        edgeVariation=16;
+        deviation=3;
+        containerHeight="286px";
+
         // decrement edgeDetail because the number of curved lines will be odd to make it vertically symmetrical
         if (edgeDetail > 1) edgeDetail++;
 
@@ -269,165 +279,7 @@ function divGenCurve(id) {
         showCode(coords, polygonCoords, 'curved', divHeight, divWidth, containerHeight);
 }
 
-function divGenCurveBAK(id) {
-    // Set drawing dimensions from form input
-    let {xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, containerHeight} = setDimensions(id);
 
-    let polygonCoords = [xs.toString() + 'px ' + ys.toString() + 'px'];
-    let coordsStr = 'M ' + xs + ' ' + ys;
-    let tempCoords = "";
-
-    // Length of lines
-    let lineSegmentLength = height / edgeDetail;
-    // Amount line lengths change
-    let lineDev = lineSegmentLength / deviation;
-
-    let segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
-
-    let coordSide, xRound, yRound;
-    let x1, x2, x3, y1, y2, y3;
-
-    for(let i = 0; i < edgeDetail; i++) {
-        coordSide = intRandom(2, edgeVariation);
-
-        y1 += segments[i];
-        x1 = xs + coordSide;
-        if(y1 > ye) y1 = ye;
-        xRound = Math.ceil(x1);
-        yRound = Math.ceil(y1);
-        coordsStr += xRound.toString() + 'px ' + yRound.toString() + 'px';
-    }
-
-    coordsStr += xs.toString() + 'px ' + ys.toString() + 'px';
-    coordsStr += xs.toString() + 'px ' + ye.toString() + 'px';
-    coordsStr += xe.toString() + 'px ' + ye.toString() + 'px';
-    coordsStr += xe.toString() + 'px ' + ys.toString() + 'px';
-    coordsStr += xs.toString() + 'px ' + ys.toString() + 'px';
-
-}
-
-function divGenJagged(id) {
-    // Set drawing dimensions from form input
-    let {xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight} = setDimensions(id);
-
-    // invert the value of deviation, so 1 -> 6, 2 -> 5..
-    deviation = 7 - deviation;
-    
-    // Initialise arrays
-    let coords = [];
-    let segments = [];
-    // Set margin for whichever value is larger to avoid clipping
-    let margin = (edgeDetail > edgeVariation)? edgeDetail: edgeVariation;
-    
-    // Set initial x, y co-ordinates
-    coords = [xs, ys];
-    let coordsStr = [xs.toString() + 'px ' + ys.toString() + 'px'];
-    
-    // 1st line: xs, ys - xs, ye
-    x = xs;
-    y = ys;
-
-    // calculate line divisions
-    // Length of lines
-    let lineSegmentLength = height / edgeDetail;
-    // Amount line lengths change
-    let lineDev = lineSegmentLength / deviation;
-    
-    segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
-
-    let coordSide, xRound, yRound;
-
-    for(let i = 0; i < edgeDetail; i++) {
-        coordSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
-        y += segments[i];
-        x = xs + coordSide;
-        if(y > ye) y = ye;
-        xRound = Math.ceil(x);
-        yRound = Math.ceil(y);
-        coordsStr.push(xRound.toString() + 'px ' + yRound.toString() + 'px');
-    }
-
-    // coordsStr.push(xs.toString() + 'px ' + ye.toString() + 'px');
-
-    // Set divs height by maximum y value
-    let divHeight = (ye + margin + 10) + 'px';
-
-    // 2nd line: xs, ye - xe, ye
-    x = xs;
-    y = ye;
-
-    // Length of lines
-    lineSegmentLength = width / edgeDetail;
-    // Amount line lengths change
-    lineDev = lineSegmentLength / deviation;
-    
-    segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
-
-    for(let i = 0; i < edgeDetail; i++) {
-        coordSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
-        x += segments[i];
-        y = ye + coordSide;
-        if(x > xe) x = xe;
-        xRound = Math.ceil(x);
-        yRound = Math.ceil(y);
-        coordsStr.push(xRound.toString() + 'px ' + yRound.toString() + 'px');
-    }
-
-    // Set divs width by maximum x value
-    let divWidth = (xe + margin + 10) + 'px';
-
-    // 3rd line: xe, ye - xe, ys
-    x = xe;
-    y = ye;
-
-    lineSegmentLength = height / edgeDetail;
-    // Amount line lengths change
-    lineDev = lineSegmentLength / deviation;
-    
-    segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
-
-    for(let i = 0; i < edgeDetail; i++) {
-        coordSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
-        y -= segments[i];
-        x = xe + coordSide;
-        if(y < ys) y = ys;
-        xRound = Math.ceil(x);
-        yRound = Math.ceil(y);
-        coordsStr.push(xRound.toString() + 'px ' + yRound.toString() + 'px');
-    }
-
-    //  4th line: xe, ys - xs, ys
-    x = xe;
-    y = ys;
-
-    // Length of lines
-    lineSegmentLength = width / edgeDetail;
-    // Amount line lengths change
-    lineDev = lineSegmentLength / deviation;
-    
-    segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
-
-    for(let i = 0; i < (edgeDetail -1); i++) {
-        coordSide = intRandom(0, (edgeVariation * 2)) -edgeVariation;
-        x -= segments[i];
-        y = ys + coordSide;
-        if(x < xs) x = xs;
-        xRound = Math.ceil(x);
-        yRound = Math.ceil(y);
-        coordsStr.push(xRound.toString() + 'px ' + yRound.toString() + 'px');
-    }
-    
-    coordsStr.push(xs.toString() + 'px ' + ys.toString() + 'px');
-    
-    let polygon = 'polygon(' + coordsStr.toString() + ')';
-    document.getElementById(id).style.clipPath = polygon;
-    document.getElementById(id).style.shapeOutside = polygon;    
-    
-    document.getElementById(id).style.height = divHeight;
-    document.getElementById(id).style.width = divWidth;
-
-    showCode(coordsStr, '', 'jagged', height, width, containerHeight);
-}
 
 function setLinePoints(iterations) {
     var pointList = {};
@@ -595,6 +447,6 @@ function divGen(id) {
 
 
 window.onload = function() {
-    divFunc('orgDiv');
+    divGenCurve('div1');
 }
 
