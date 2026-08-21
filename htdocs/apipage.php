@@ -1,4 +1,4 @@
-<?php $title='Curvilinear UI'; $page='Home'; ?>
+<?php $title='Curvilinear UI'; $page='API'; ?>
 <?php include 'includes/header.php'; ?>
 
 <div class="container-fluid px-0">
@@ -9,7 +9,7 @@
                     <h1 class="h3 text-secondary mb-0 mt-2 ms-0">Navigation</h1>
                 </div>
                 <a class="w3-bar-item w3-button w3-small<?php if($page=="Home") echo ' active';?>" href="index.php">Div</a>
-                <a class="w3-bar-item w3-button w3-small<?php if($page=="") echo ' active';?>" href="apipage.php">API</a>
+                <a class="w3-bar-item w3-button w3-small<?php if($page=="API") echo ' active';?>" href="api.php">API</a>
             </div>
         </section>
 
@@ -22,10 +22,6 @@
             </div> -->
 
             <div class="container w3-border w3-border-grey p-3" style="min-width:1000px">
-      <div id="orgDivContainer" class="">
-        <div id="orgDiv" class="me-2"></div>
-        <p class="text-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque imperdiet libero eu neque facilisis. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Odit architecto aspernatur suscipit error saepe laudantium ipsam sed laboriosam illum adipisci. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa exercitationem minus sint consequuntur voluptas harum quos error delectus deserunt quaerat quis veritatis cum, a amet sapiente architecto? Unde porro nihil magni blanditiis facere quam aliquid eum labore ipsum harum fuga nostrum minima voluptate quidem neque, saepe repellendus. Cumque ea excepturi consectetur vitae ipsa eligendi qui quisquam, alias autem rerum praesentium quam ex quod modi nesciunt, voluptatibus, ut nihil! Dolor non aliquam nesciunt repudiandae voluptatum placeat ratione suscipit quod, quasi, eligendi dolores blanditiis veniam amet ab cumque ad totam voluptatem rem? Voluptate excepturi quae ipsum omnis consequatur quidem incidunt ea. Quibusdam!Unde porro nihil magni blanditiis facere quam aliquid eum labore ipsum harum fuga nostrum minima voluptate quidem neque, saepe repellendus. Cumque ea excepturi consectetur vitae ipsa eligendi qui quisquam, alias autem rerum praesentium quam ex quod modi nesciunt, voluptatibus, ut nihil! Dolor non aliquam nesciunt repudiandae voluptatum placeat ratione suscipit quod, quasi, eligendi dolores blanditiis veniam amet ab cumque ad totam voluptatem rem? Voluptate excepturi quae ipsum omnis consequatur quidem incidunt ea. Quibusdam!</p>
-      </div>
       <div class="container-fluid mt-3">
         <div class="row">
           <div class="col-5">
@@ -48,8 +44,8 @@
                 <select class="form-select" name="style" id="style">
                   <!-- <option>Normal</option> -->
                   <option>Rectangular Curved</option>
-                  <!-- <option>Rectangular Jagged</option> -->
-                  <!-- <option>Circular</option> -->
+                  <option>Rectangular Jagged</option>
+                  <option>Circular</option>
                 </select>
               </div>
             </div>
@@ -86,7 +82,7 @@
             </div> -->
             <div class="row mt-2">
               <div class="col d-grid">
-                <button type="button" class="btn btn-primary btn-block text-white" onclick="divFunc('orgDiv')">Generate Div</button>
+                <button type="button" class="btn btn-primary btn-block text-white" onclick="APILink('orgDiv')">Generate Div</button>
               </div>
             </div>
           </div>

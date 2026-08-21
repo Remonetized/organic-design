@@ -2,7 +2,7 @@
   <div class="container-fluid px-2">
 
     <!-- 1) Brand -->
-    <a class="navbar-brand border border-white border-2 rounded order-1" href="api.php">
+    <a class="navbar-brand border border-white border-2 rounded order-1" href="apipage.php">
       <span class="bg-primary py-0 px-1">API</span>
     </a>
       <!-- toggler only on mobile -->

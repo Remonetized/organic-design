@@ -9,6 +9,7 @@
                     <h1 class="h3 text-secondary mb-0 mt-2 ms-0">Navigation</h1>
                 </div>
                 <a class="w3-bar-item w3-button w3-small<?php if($page=="Home") echo ' active';?>" href="index.php">Div</a>
+                <a class="w3-bar-item w3-button w3-small<?php if($page=="Home") echo ' active';?>" href="index.php">Grid</a>
                 <a class="w3-bar-item w3-button w3-small<?php if($page=="") echo ' active';?>" href="apipage.php">API</a>
             </div>
         </section>
@@ -48,8 +49,8 @@
                 <select class="form-select" name="style" id="style">
                   <!-- <option>Normal</option> -->
                   <option>Rectangular Curved</option>
-                  <!-- <option>Rectangular Jagged</option> -->
-                  <!-- <option>Circular</option> -->
+                  <option>Rectangular Jagged</option>
+                  <option>Circular</option>
                 </select>
               </div>
             </div>
