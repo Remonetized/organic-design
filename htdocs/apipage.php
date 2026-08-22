@@ -44,8 +44,6 @@
                 <select class="form-select" name="style" id="style">
                   <!-- <option>Normal</option> -->
                   <option>Rectangular Curved</option>
-                  <option>Rectangular Jagged</option>
-                  <option>Circular</option>
                 </select>
               </div>
             </div>

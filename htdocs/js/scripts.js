@@ -96,7 +96,7 @@ function setDimensions(id) {
 function divGenCurve(id) {
         // Set drawing dimensions from form input
         let {xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight} = setDimensions(id);
-        console.log({xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight});
+        // console.log({xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight});
         // decrement edgeDetail because the number of curved lines will be odd to make it vertically symmetrical
         if (edgeDetail > 1) edgeDetail++;
 
