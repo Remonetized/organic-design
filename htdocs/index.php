@@ -119,6 +119,19 @@
             </div>
             <div class="row">
               <div class="col">
+                <h3 class="h3">API Call <span class="w3-right fa fa-clone" onclick="copyCode('divAPI')"></span></h3>
+                <div class="alert alert-success alert-dismissible fade show copyAlert" id="divAPIcopy">
+                  <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'"></button>
+                  <div id="divAPIalert"></div>
+                </div>
+                <div class="w3-panel w3-white border-start border-5 border-primary">
+                  <pre id="divAPI" class="w3-text-grey">
+                  </pre>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col">
                 <h3 class="h3">SASS Variables <span class="w3-right fa fa-clone" onclick="copyCode('divSASS')"></span></h3>
                 <div class="alert alert-success alert-dismissible fade show copyAlert" id="divSASScopy">
                   <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'"></button>

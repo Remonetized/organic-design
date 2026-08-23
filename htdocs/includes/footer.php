@@ -17,7 +17,7 @@
     <!-- Bootstrap Bundle with Popper -->
     <script src="./js/bootstrap.bundle.min.js"></script>
     <!-- JS -->
-    <script src="./js/scripts.js"></script>
+    <!-- <script src="./js/scripts.js"></script> -->
 
   </body>
 </html>
