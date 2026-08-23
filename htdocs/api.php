@@ -55,7 +55,7 @@ $xe = $xs + $width;
 $ye = $ys + $height;
 $containerHeight = $height + $variation + 70;
 
-if($detail > 1) $detail++;
+// if($detail > 1) $detail++;
 if($detail > $variation) $margin = $detail;
 else $margin = $variation;
 
