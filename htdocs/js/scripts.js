@@ -253,10 +253,6 @@ function divGenCurve(id) {
         let polygon = 'polygon(' + polygonCoords.toString() + ')';
         document.getElementById(id).style.clipPath = curve;
         document.getElementById(id).style.shapeOutside = polygon;    
-    
-        // console.clear();
-        // console.log(curve);
-        // console.log(polygon);
 
         // Set divs height by maximum y value
         let divHeight = (ye + margin + 10) + 'px';
