@@ -70,5 +70,4 @@ function confirmModal($msg, $trueURL, $falseURL='', $title='Confirm') {
 <?php }
 
 
-
 ?>

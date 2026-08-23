@@ -96,7 +96,7 @@ function setDimensions(id) {
 function divGenCurve(id) {
         // Set drawing dimensions from form input
         let {xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight} = setDimensions(id);
-        console.log({xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight});
+        // console.log({xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, deviation, containerHeight});
         // decrement edgeDetail because the number of curved lines will be odd to make it vertically symmetrical
         if (edgeDetail > 1) edgeDetail++;
 
@@ -145,9 +145,9 @@ function divGenCurve(id) {
             y4 = y1 + moveFw;
             tempCoords = ' C ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3 + ' ' + x4 + ' ' + y4;
             coords += tempCoords;
-            polygonCoords.push(x2.toString() + 'px ' + y2.toString() + 'px');
-            polygonCoords.push(x3.toString() + 'px ' + y3.toString() + 'px');
-            polygonCoords.push(x4.toString() + 'px ' + y4.toString() + 'px');
+            polygonCoords.push(' ' + x2.toString() + 'px ' + y2.toString() + 'px');
+            polygonCoords.push(' ' + x3.toString() + 'px ' + y3.toString() + 'px');
+            polygonCoords.push(' ' + x4.toString() + 'px ' + y4.toString() + 'px');
             y1 = y4;
         }
 
@@ -176,9 +176,9 @@ function divGenCurve(id) {
             y4 = ye;
             tempCoords = ' C ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3 + ' ' + x4 + ' ' + y4;
             coords += tempCoords;
-            polygonCoords.push(x2.toString() + 'px ' + y2.toString() + 'px');
-            polygonCoords.push(x3.toString() + 'px ' + y3.toString() + 'px');
-            polygonCoords.push(x4.toString() + 'px ' + y4.toString() + 'px');
+            polygonCoords.push(' ' + x2.toString() + 'px ' + y2.toString() + 'px');
+            polygonCoords.push(' ' + x3.toString() + 'px ' + y3.toString() + 'px');
+            polygonCoords.push(' ' + x4.toString() + 'px ' + y4.toString() + 'px');
             x1 = x4;
         }        
 
@@ -209,9 +209,9 @@ function divGenCurve(id) {
             x4 = xe;
             tempCoords = ' C ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3 + ' ' + x4 + ' ' + y4;
             coords += tempCoords;
-            polygonCoords.push(x2.toString() + 'px ' + y2.toString() + 'px');
-            polygonCoords.push(x3.toString() + 'px ' + y3.toString() + 'px');
-            polygonCoords.push(x4.toString() + 'px ' + y4.toString() + 'px');
+            polygonCoords.push(' ' + x2.toString() + 'px ' + y2.toString() + 'px');
+            polygonCoords.push(' ' + x3.toString() + 'px ' + y3.toString() + 'px');
+            polygonCoords.push(' ' + x4.toString() + 'px ' + y4.toString() + 'px');
             y1 = y4;
         }
 
@@ -243,9 +243,9 @@ function divGenCurve(id) {
             y4 = ys;
             tempCoords = ' C ' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3 + ' ' + x4 + ' ' + y4;
             coords += tempCoords;
-            polygonCoords.push(x2.toString() + 'px ' + y2.toString() + 'px');
-            polygonCoords.push(x3.toString() + 'px ' + y3.toString() + 'px');
-            polygonCoords.push(x4.toString() + 'px ' + y4.toString() + 'px');
+            polygonCoords.push(' ' + x2.toString() + 'px ' + y2.toString() + 'px');
+            polygonCoords.push(' ' + x3.toString() + 'px ' + y3.toString() + 'px');
+            polygonCoords.push(' ' + x4.toString() + 'px ' + y4.toString() + 'px');
             x1 = x4;
         }
 
@@ -266,44 +266,7 @@ function divGenCurve(id) {
         document.getElementById(id).style.height = divHeight;
         document.getElementById(id).style.width = divWidth;
     
-        showCode(coords, polygonCoords, 'curved', divHeight, divWidth, containerHeight);
-}
-
-function divGenCurveBAK(id) {
-    // Set drawing dimensions from form input
-    let {xs, ys, xe, ye, height, width, edgeDetail, edgeVariation, containerHeight} = setDimensions(id);
-
-    let polygonCoords = [xs.toString() + 'px ' + ys.toString() + 'px'];
-    let coordsStr = 'M ' + xs + ' ' + ys;
-    let tempCoords = "";
-
-    // Length of lines
-    let lineSegmentLength = height / edgeDetail;
-    // Amount line lengths change
-    let lineDev = lineSegmentLength / deviation;
-
-    let segments = segmentLine(lineSegmentLength, edgeDetail, lineDev);
-
-    let coordSide, xRound, yRound;
-    let x1, x2, x3, y1, y2, y3;
-
-    for(let i = 0; i < edgeDetail; i++) {
-        coordSide = intRandom(2, edgeVariation);
-
-        y1 += segments[i];
-        x1 = xs + coordSide;
-        if(y1 > ye) y1 = ye;
-        xRound = Math.ceil(x1);
-        yRound = Math.ceil(y1);
-        coordsStr += xRound.toString() + 'px ' + yRound.toString() + 'px';
-    }
-
-    coordsStr += xs.toString() + 'px ' + ys.toString() + 'px';
-    coordsStr += xs.toString() + 'px ' + ye.toString() + 'px';
-    coordsStr += xe.toString() + 'px ' + ye.toString() + 'px';
-    coordsStr += xe.toString() + 'px ' + ys.toString() + 'px';
-    coordsStr += xs.toString() + 'px ' + ys.toString() + 'px';
-
+        showCode(coords, polygonCoords, 'curved', height, width, edgeDetail, edgeVariation, deviation);
 }
 
 function divGenJagged(id) {
@@ -426,7 +389,7 @@ function divGenJagged(id) {
     document.getElementById(id).style.height = divHeight;
     document.getElementById(id).style.width = divWidth;
 
-    showCode(coordsStr, '', 'jagged', height, width, containerHeight);
+    showCode(coordsStr, '', 'jagged', height, width);
 }
 
 function setLinePoints(iterations) {
@@ -531,28 +494,32 @@ function divGenCircle(id) {
     document.getElementById(id).style.clipPath = curvepath;
     document.getElementById(id).style.shapeOutside = polygonpath;
 
-    showCode(coords, polygonCoords, 'curved', divHeight, divWidth);
+    showCode(coords, polygonCoords, 'curved', divHeight, divWidth,);
 }
 
-function showCode(coords, polygonCoords, style, height, width, contHeight) {
+function showCode(coords, polygonCoords, style, height, width, detail, variation, deviation) {
     const backColour = document.getElementById('backcolour').value;
     // Show HTML
     let html = '<code>&lt;div id="myDiv">\n&lt;/div></code>';
     document.getElementById('divHTML').innerHTML = html;
     // Show CSS
-    let css = '#myDiv {\n\theight: ' + height + ';\n\twidth: ' + width + ';\n\tbackground-color: ' + backColour + ';';
+    let css = '#myDiv {\n\theight: ' + height + 'px;\n\twidth: ' + width + 'px;\n\tbackground-color: ' + backColour + ';';
     if (coords != 'null') {
         switch(style) {
             case 'jagged':
                 css += '\n\tclip-path: polygon(' + coords + ');\n\tshape-outside: polygon(' + coords + ');';
                 break;
             case 'curved':
-                css += '\n\tclip-path: path("' + coords + '");\n\tshape-outside: polygon(' + polygonCoords + ');';
+                css += '\n\tclip-path: path("M ' + coords + ' Z");\n\tshape-outside: polygon(' + polygonCoords + ');';
                 break;
         }
     }
     css += '\n}';
     document.getElementById('divCSS').innerHTML = css;
+    // Show API URL
+    let api = "https://organicdesign.click/prototype/api.php";
+    api += "?h=" + height + "&w=" + width + "&detail=" + detail + "&variation=" + variation + "&deviation=" + deviation;
+    document.getElementById('divAPI').innerHTML = api;
     // Show SASS
     let sass = '$backgroundColor: ' + backColour + ';';
     if (coords != 'null') {
@@ -594,7 +561,5 @@ function divGen(id) {
 }
 
 
-window.onload = function() {
-    divFunc('orgDiv');
-}
+window.onload = function() { divFunc('orgDiv'); }
 

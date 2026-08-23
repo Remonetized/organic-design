@@ -9,7 +9,7 @@
                     <h1 class="h3 text-secondary mb-0 mt-2 ms-0">Navigation</h1>
                 </div>
                 <a class="w3-bar-item w3-button w3-small<?php if($page=="Home") echo ' active';?>" href="index.php">Div</a>
-                <a class="w3-bar-item w3-button w3-small<?php if($page=="API") echo ' active';?>" href="api.php">API</a>
+                <a class="w3-bar-item w3-button w3-small<?php if($page=="API") echo ' active';?>" href="apipage.php">API</a>
             </div>
         </section>
 
@@ -21,111 +21,43 @@
                 </p>
             </div> -->
 
-            <div class="container w3-border w3-border-grey p-3" style="min-width:1000px">
-      <div class="container-fluid mt-3">
+            <div class="container" style="min-width:1000px">
+      <div class="container-fluid w3-border w3-border-grey p-3 mt-3">
         <div class="row">
-          <div class="col-5">
-            <div class="row mt-2 pt-2">
-              <div class="col-6"><label for="customRange3" class="form-label">Div Width</label></div>
-              <div class="col-6"><input type="range" class="form-range" min="40" max="780" id="divWidth" value="278"></div>
-              <!-- <div class="col-6"><input type="number" class="" min="40" max="780" id="divWidth"></div> -->
-
-            </div>
-            <div class="row mt-2">
-              <div class="col-6"><label for="customRange3" class="form-label">Div Height</label></div>
-              <div class="col-6"><input type="range" class="form-range" min="40" max="780" id="divHeight" value="278"></div>
-              <!-- <div class="col-6"><input type="number" class="" min="40" max="780" id="divHeight"></div> -->
-            </div>
-            <div class="row mt-2">
-              <div class="col-6">
-                <label for="style" class="form-label">Edge Style:</label>
-              </div>
-              <div class="col-6">
-                <select class="form-select" name="style" id="style">
-                  <!-- <option>Normal</option> -->
-                  <option>Rectangular Curved</option>
-                  <option>Rectangular Jagged</option>
-                  <option>Circular</option>
-                </select>
-              </div>
-            </div>
-            <div class="row mt-2">
-              <div class="col-6"><label for="divDetail" class="form-label">Edge Detail</label></div>
-              <div class="col-6"><input type="range" class="form-range" min="2" max="14" step="2" id="divDetail"></div>
-            </div>
-            <div class="row mt-2">
-              <div class="col-6"><label for="divVariation" class="form-label">Edge Variation</label></div>
-              <div class="col-6"><input type="range" class="form-range" min="2" max="30" id="divVariation"></div>
-            </div>
-            <div class="row mt-2">
-              <div class="col-6"><label for="deviation" class="form-label">Deviation</label></div>
-              <div class="col-6"><input type="range" class="form-range" min="1" max="5" id="deviation"></div>
-            </div>
-            <div class="row mt-2">
-              <div class="col-6">
-                <label for="backcolour" class="form-label">Background Colour:</label>
-              </div>
-              <div class="col-6">
-                <input type="color" class="w-100" id="backcolour" name="backcolour" value="#BBBBBB">
-              </div>
-            </div>
-            <!-- <div class="row mt-2">
-              <div class="col-1">
-                <input class="form-check-input" type="checkbox" id="borderCheck" name="borderCheck" value="something" checked>
-              </div>
-              <div class="col-5">
-                <label for="bordercolour" class="form-label">Border Colour:</label>
-              </div>
-              <div class="col-6">
-                <input type="color" class="w-100" id="bordercolour" name="bordercolour" value="#000000">
-              </div>
-            </div> -->
-            <div class="row mt-2">
-              <div class="col d-grid">
-                <button type="button" class="btn btn-primary btn-block text-white" onclick="APILink('orgDiv')">Generate Div</button>
-              </div>
-            </div>
+          <div class="col">
+            <h1 class="h1">Curvilinear Element API</h1>
+            <p>This prototype API returns a clip-path that can be applied to divs with a curved outline. It optionally also provides a polygonal path that can be used with the CSS shape-outside to push text outside the boundary, as demonstrated below.</p>
+            <h2 class="h2">How to use the API</h2>
+            <p>Enter the API call into the text box below to generate elements, they will be applied to the div below. Note that no limits are placed on the values, but they may not work as expected outside the suggested range.</p>
+            
           </div>
-          <div class="col-7 bg-light p-2">
-            <div class="row">
-              <div class="col">
-                <h3 class="h3">HTML <span class="w3-right fa fa-clone" onclick="copyCode('divHTML')"></span></h3>
-                <div class="alert alert-success alert-dismissible fade show copyAlert" id="divHTMLcopy">
-                  <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'"></button>
-                  <div id="divHTMLalert"></div>
-                </div>
-                <div class="w3-panel w3-white border-start border-5 border-primary">
-                  <pre id="divHTML" class="w3-text-grey">
-                  </pre>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <h3 class="h3">CSS <span class="w3-right fa fa-clone" onclick="copyCode('divCSS')"></span></h3>
-                <div class="alert alert-success alert-dismissible fade show copyAlert" id="divCSScopy">
-                  <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'"></button>
-                  <div id="divCSSalert"></div>
-                </div>
-                <div class="w3-panel w3-white border-start border-5 border-primary">
-                  <pre id="divCSS" class="w3-text-grey">
-                  </pre>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col">
-                <h3 class="h3">SASS Variables <span class="w3-right fa fa-clone" onclick="copyCode('divSASS')"></span></h3>
-                <div class="alert alert-success alert-dismissible fade show copyAlert" id="divSASScopy">
-                  <button type="button" class="btn-close" onclick="this.parentElement.style.display='none'"></button>
-                  <div id="divSASSalert"></div>
-                </div>
-                <div class="w3-panel w3-white border-start border-5 border-primary">
-                  <pre id="divSASS" class="w3-text-grey">
-                  </pre>
-                </div>
-              </div>
-            </div>
+        </div>
+      </div>
+      <div class="container-fluid w3-border w3-border-grey p-3 mt-3">
+        <div class="row m-1 pb-3 border-bottom">
+          <div class="col-1">
+            <label for="style" class="form-label">API Call:</label>
+          </div>
+          <div class="col">
+            <input id="APIRequest" type="text" class="form-control form-control-sm" value="https://organicdesign.click/prototype/api.php?h=278&w=278&detail=9&variation=16&deviation=3">
+          </div>
+          <div class="col-1">
+            <button id="submitRequest" type="button" class="btn btn-primary btn-sm">Send</button>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col">
+            <h3 class="h3">JSON Response</h3>
+            <div id="JSON" class="container-fluid bg-dark text-white rounded">Awaiting input</div>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col">
+            <h3 class="h3">Demonstration</h3>
+          <div id="curveDivContainer" class="">
+        <div id="curveDiv" class="me-2"></div>
+        <p class="text-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque imperdiet libero eu neque facilisis. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Odit architecto aspernatur suscipit error saepe laudantium ipsam sed laboriosam illum adipisci. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa exercitationem minus sint consequuntur voluptas harum quos error delectus deserunt quaerat quis veritatis cum, a amet sapiente architecto? Unde porro nihil magni blanditiis facere quam aliquid eum labore ipsum harum fuga nostrum minima voluptate quidem neque, saepe repellendus. Cumque ea excepturi consectetur vitae ipsa eligendi qui quisquam, alias autem rerum praesentium quam ex quod modi nesciunt, voluptatibus, ut nihil! Dolor non aliquam nesciunt repudiandae voluptatum placeat ratione suscipit quod, quasi, eligendi dolores blanditiis veniam amet ab cumque ad totam voluptatem rem? Voluptate excepturi quae ipsum omnis consequatur quidem incidunt ea. Quibusdam!Unde porro nihil magni blanditiis facere quam aliquid eum labore ipsum harum fuga nostrum minima voluptate quidem neque, saepe repellendus. Cumque ea excepturi consectetur vitae ipsa eligendi qui quisquam, alias autem rerum praesentium quam ex quod modi nesciunt, voluptatibus, ut nihil! Dolor non aliquam nesciunt repudiandae voluptatum placeat ratione suscipit quod, quasi, eligendi dolores blanditiis veniam amet ab cumque ad totam voluptatem rem? Voluptate excepturi quae ipsum omnis consequatur quidem incidunt ea. Quibusdam!</p>
+      </div>
           </div>
         </div>
       </div>
@@ -136,6 +68,23 @@
     </div>
 </div>
 
-<script src="js/scripts.js"></script>
-<script></script>
+<script>
+    const submitBtn = document.querySelector("#submitRequest");
+    const json_result = document.querySelector("#JSON");
+
+    submitBtn.addEventListener("click", async () => {
+      const response = await fetch(
+        "./api.php?h=278&w=278&detail=9&variation=16&deviation=3"
+      );
+
+      const data = await response.json();
+
+      const output = JSON.stringify(data);
+      json_result.innerHTML = output;
+    });
+    document.getElementById('curveDiv').style.clipPath = data.path;
+    document.getElementById('curveDiv').style.shapeOutside = data.polygon;
+  </script>
+
+
 <?php include 'includes/footer.php'; ?>
