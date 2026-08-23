@@ -14,14 +14,8 @@
         </section>
 
         <section class="col p-3">
-            <!-- <div class="border rounded p-3">
-                <h2 class="h4 mb-2">Div</h2>
-                <p class="mb-0">
-                    Curvilinear element generator content will be added here.
-                </p>
-            </div> -->
 
-            <div class="container" style="min-width:1000px">
+          <div class="container" style="min-width:1000px">
       <div class="container-fluid w3-border w3-border-grey p-3 mt-3">
         <div class="row">
           <div class="col">

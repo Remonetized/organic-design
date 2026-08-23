@@ -1,10 +1,10 @@
 <?php
 function dbOpen() {
     // Localhost
-    require_once("{$_SERVER['DOCUMENT_ROOT']}/db/dbaccess.php");
+    // require_once("{$_SERVER['DOCUMENT_ROOT']}/db/dbaccess.php");
     
     // Server
-    // include("../db/dbaccess.php");
+    include("../db/dbaccess.php");
     
     return $dbc;
 }

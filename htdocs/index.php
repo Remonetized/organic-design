@@ -14,12 +14,6 @@
         </section>
 
         <section class="col p-3">
-            <!-- <div class="border rounded p-3">
-                <h2 class="h4 mb-2">Div</h2>
-                <p class="mb-0">
-                    Curvilinear element generator content will be added here.
-                </p>
-            </div> -->
 
             <div class="container w3-border w3-border-grey p-3" style="min-width:1000px">
       <div id="orgDivContainer" class="">
@@ -32,13 +26,11 @@
             <div class="row mt-2 pt-2">
               <div class="col-6"><label for="customRange3" class="form-label">Div Width</label></div>
               <div class="col-6"><input type="range" class="form-range" min="40" max="780" id="divWidth" value="278"></div>
-              <!-- <div class="col-6"><input type="number" class="" min="40" max="780" id="divWidth"></div> -->
 
             </div>
             <div class="row mt-2">
               <div class="col-6"><label for="customRange3" class="form-label">Div Height</label></div>
               <div class="col-6"><input type="range" class="form-range" min="40" max="780" id="divHeight" value="278"></div>
-              <!-- <div class="col-6"><input type="number" class="" min="40" max="780" id="divHeight"></div> -->
             </div>
             <div class="row mt-2">
               <div class="col-6">
@@ -46,10 +38,7 @@
               </div>
               <div class="col-6">
                 <select class="form-select" name="style" id="style">
-                  <!-- <option>Normal</option> -->
                   <option>Rectangular Curved</option>
-                  <!-- <option>Rectangular Jagged</option> -->
-                  <!-- <option>Circular</option> -->
                 </select>
               </div>
             </div>
@@ -73,17 +62,6 @@
                 <input type="color" class="w-100" id="backcolour" name="backcolour" value="#BBBBBB">
               </div>
             </div>
-            <!-- <div class="row mt-2">
-              <div class="col-1">
-                <input class="form-check-input" type="checkbox" id="borderCheck" name="borderCheck" value="something" checked>
-              </div>
-              <div class="col-5">
-                <label for="bordercolour" class="form-label">Border Colour:</label>
-              </div>
-              <div class="col-6">
-                <input type="color" class="w-100" id="bordercolour" name="bordercolour" value="#000000">
-              </div>
-            </div> -->
             <div class="row mt-2">
               <div class="col d-grid">
                 <button type="button" class="btn btn-primary btn-block text-white" onclick="divFunc('orgDiv')">Generate Div</button>

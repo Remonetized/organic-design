@@ -40,8 +40,7 @@
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle ps-2" href="" data-bs-toggle="dropdown">Version</a>
           <ul class="dropdown-menu bg-primary mt-2">
-            <li><a class="dropdown-item text-white" href="">version 0.0.1</a></li>
-            <li><a class="dropdown-item text-white" href="">version 0.0.2</a></li>
+            <li><a class="dropdown-item text-white" href="#">version 1.0.0</a></li>
           </ul>
         </li>
       </ul>
