@@ -28,7 +28,7 @@
             <h1 class="h1">Curvilinear Element API</h1>
             <p>This prototype API returns a clip-path that can be applied to divs with a curved outline. It optionally also provides a polygonal path that can be used with the CSS shape-outside to push text outside the boundary, as demonstrated below.</p>
             <h2 class="h2">How to use the API</h2>
-            <p>Enter the API call into the text box below to generate elements, they will be applied to the div below. Note that no limits are placed on the values, but they may not work as expected outside the suggested range.</p>
+            <p>Enter the API call into the text box below to generate elements, they will be applied to the div below. Note that no constraints are placed on the values to allow experimentation, but they may not work as expected outside the suggested ranges.</p>
             
           </div>
         </div>
@@ -47,15 +47,31 @@
         </div>
         <div class="row my-2">
           <div class="col">
-            <h3 class="h3">JSON Response</h3>
-            <div id="JSON" class="container-fluid bg-dark text-white rounded">Awaiting input</div>
+            <details class="border-top border-bottom">
+              <summary>JSON Response</summary>
+              <code id="JSON" class="text-secondary small"></code>
+            </details>
+          </div>
+        </div>
+        <div class="row my-2">
+          <div class="col">
+            <details class="border-top border-bottom">
+              <summary>API example (Javascript)</summary>
+              <pre><code class="text-secondary">const response = await fetch(
+  https://organicdesign.click/prototype/api.php?w=278&h=278&detail=9&variation=16&deviation=3'
+);
+
+const data = await response.json();
+element.style.clipPath = data.path;
+element.style.shapeOutside = data.polygon;</code></pre>
+            </details>
           </div>
         </div>
         <div class="row mt-4">
           <div class="col">
             <h3 class="h3">Demonstration</h3>
-          <div id="curveDivContainer" class="">
-        <div id="curveDiv" class="me-2"></div>
+          <div id="orgDivContainer" class="">
+        <div id="orgDiv" class="me-2"></div>
         <p class="text-secondary">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque imperdiet libero eu neque facilisis. Lorem ipsum, dolor sit amet consectetur adipisicing elit. Odit architecto aspernatur suscipit error saepe laudantium ipsam sed laboriosam illum adipisci. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ipsa exercitationem minus sint consequuntur voluptas harum quos error delectus deserunt quaerat quis veritatis cum, a amet sapiente architecto? Unde porro nihil magni blanditiis facere quam aliquid eum labore ipsum harum fuga nostrum minima voluptate quidem neque, saepe repellendus. Cumque ea excepturi consectetur vitae ipsa eligendi qui quisquam, alias autem rerum praesentium quam ex quod modi nesciunt, voluptatibus, ut nihil! Dolor non aliquam nesciunt repudiandae voluptatum placeat ratione suscipit quod, quasi, eligendi dolores blanditiis veniam amet ab cumque ad totam voluptatem rem? Voluptate excepturi quae ipsum omnis consequatur quidem incidunt ea. Quibusdam!Unde porro nihil magni blanditiis facere quam aliquid eum labore ipsum harum fuga nostrum minima voluptate quidem neque, saepe repellendus. Cumque ea excepturi consectetur vitae ipsa eligendi qui quisquam, alias autem rerum praesentium quam ex quod modi nesciunt, voluptatibus, ut nihil! Dolor non aliquam nesciunt repudiandae voluptatum placeat ratione suscipit quod, quasi, eligendi dolores blanditiis veniam amet ab cumque ad totam voluptatem rem? Voluptate excepturi quae ipsum omnis consequatur quidem incidunt ea. Quibusdam!</p>
       </div>
           </div>
@@ -70,20 +86,23 @@
 
 <script>
     const submitBtn = document.querySelector("#submitRequest");
+    const inputQuery = document.querySelector('#APIRequest');
     const json_result = document.querySelector("#JSON");
-
+    const div = document.getElementById('orgDiv');
     submitBtn.addEventListener("click", async () => {
       const response = await fetch(
-        "./api.php?h=278&w=278&detail=9&variation=16&deviation=3"
+        inputQuery.value
       );
-
       const data = await response.json();
 
-      const output = JSON.stringify(data);
-      json_result.innerHTML = output;
+      json_result.textContent = JSON.stringify(data);
+
+      div.style.clipPath = data.path;
+      div.style.shapeOutside = data.polygon;
+      div.style.height = (data.height + 70) + 'px';
+      div.style.width = (data.width  + 70)+ 'px';
     });
-    document.getElementById('curveDiv').style.clipPath = data.path;
-    document.getElementById('curveDiv').style.shapeOutside = data.polygon;
+
   </script>
 
 
