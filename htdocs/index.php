@@ -24,41 +24,40 @@
         <div class="row">
           <div class="col-5">
             <div class="row mt-2 pt-2">
-              <div class="col-6"><label for="customRange3" class="form-label">Div Width</label></div>
-              <div class="col-6"><input type="range" class="form-range" min="40" max="780" id="divWidth" value="278"></div>
-
+              <div class="col-5"><label for="divWidth" class="form-label">Div Width</label></div>
+              <div class="col-7"><input type="range" class="form-range" min="40" max="780" id="divWidth" value="278" data-bs-toggle="tooltip" data-bs-placement="right"></div>
             </div>
             <div class="row mt-2">
-              <div class="col-6"><label for="customRange3" class="form-label">Div Height</label></div>
-              <div class="col-6"><input type="range" class="form-range" min="40" max="780" id="divHeight" value="278"></div>
+              <div class="col-5"><label for="divHeight" class="form-label">Div Height</label></div>
+              <div class="col-7"><input type="range" class="form-range" min="40" max="780" id="divHeight" value="278" data-bs-toggle="tooltip" data-bs-placement="right"></div>
             </div>
             <div class="row mt-2">
-              <div class="col-6">
+              <div class="col-5">
                 <label for="style" class="form-label">Edge Style:</label>
               </div>
-              <div class="col-6">
+              <div class="col-7">
                 <select class="form-select" name="style" id="style">
                   <option>Rectangular Curved</option>
                 </select>
               </div>
             </div>
             <div class="row mt-2">
-              <div class="col-6"><label for="divDetail" class="form-label">Edge Detail</label></div>
-              <div class="col-6"><input type="range" class="form-range" min="2" max="14" step="2" id="divDetail"></div>
+              <div class="col-5"><label for="divDetail" class="form-label">Edge Detail</label></div>
+              <div class="col-7"><input type="range" class="form-range" min="2" max="14" step="2" id="divDetail" data-bs-toggle="tooltip" data-bs-placement="right"></div>
             </div>
             <div class="row mt-2">
-              <div class="col-6"><label for="divVariation" class="form-label">Edge Variation</label></div>
-              <div class="col-6"><input type="range" class="form-range" min="2" max="30" id="divVariation"></div>
+              <div class="col-5"><label for="divVariation" class="form-label">Edge Variation</label></div>
+              <div class="col-7"><input type="range" class="form-range" min="2" max="30" id="divVariation" data-bs-toggle="tooltip" data-bs-placement="right"></div>
             </div>
             <div class="row mt-2">
-              <div class="col-6"><label for="deviation" class="form-label">Deviation</label></div>
-              <div class="col-6"><input type="range" class="form-range" min="1" max="5" id="deviation"></div>
+              <div class="col-5"><label for="deviation" class="form-label">Deviation</label></div>
+              <div class="col-7"><input type="range" class="form-range" min="1" max="5" id="deviation" data-bs-toggle="tooltip" data-bs-placement="right"></div>
             </div>
             <div class="row mt-2">
-              <div class="col-6">
+              <div class="col-5">
                 <label for="backcolour" class="form-label">Background Colour:</label>
               </div>
-              <div class="col-6">
+              <div class="col-7">
                 <input type="color" class="w-100" id="backcolour" name="backcolour" value="#BBBBBB">
               </div>
             </div>
@@ -132,5 +131,26 @@
 </div>
 
 <script src="js/scripts.js"></script>
-<script></script>
+<script>
+var inputRange = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+// var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+//     return new bootstrap.Tooltip(tooltipTriggerEl)
+// }
+console.log(inputRange);
+inputRange.forEach(updateValue);
+var input;
+function updateValue(value, index, array) {
+  value.title = value.value; 
+  console.log({value, index, array});
+  input = document.getElementById(value.id);
+  input.addEventListener('input', function() {
+    value.title = this.value;
+    bootstrap.Tooltip.getInstance(value).setContent({ '.tooltip-inner': this.value });
+  });
+  
+  
+} 
+
+
+</script>
 <?php include 'includes/footer.php'; ?>

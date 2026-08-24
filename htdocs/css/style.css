@@ -13580,6 +13580,10 @@ a {
   color: black !important;
 }
 
+.form-range {
+  cursor: pointer;
+}
+
 body {
   min-width: 230px;
 }
