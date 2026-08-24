@@ -556,6 +556,5 @@ function divGen(id) {
     showCode('null', 'none', divHeight, divWidth, containerHeight);
 }
 
-
 window.onload = function() { divFunc('orgDiv'); }
 
